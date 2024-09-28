@@ -2,6 +2,6 @@
 
 um programa para gravar todas as teclas que o usuario digitar
 
-*possibilidade de mandar por email
-*possibilidade de inicio junto com o windows
-*possibilidade de iniciar automaticamrente quando espetado o pendrive
+1 possibilidade de mandar por email
+2 possibilidade de inicio junto com o windows
+3 possibilidade de iniciar automaticamrente quando espetado o pendrive
