@@ -1,0 +1,88 @@
+sse código implementa um keylogger simples usando as bibliotecas tkinter para a interface gráfica e pynput para capturar entradas do teclado. Vamos analisar cada parte do código:
+
+Importações
+python
+
+Copiar
+import tkinter as tk
+from pynput import keyboard
+from datetime import datetime
+tkinter: Usado para criar a interface gráfica.
+pynput.keyboard: Usado para monitorar as teclas pressionadas.
+datetime: Usado para registrar a data e hora em que a gravação foi iniciada.
+Classe KeyloggerApp
+python
+
+Copiar
+class KeyloggerApp:
+    def __init__(self, master):
+        ...
+Essa classe cria a aplicação do keylogger, onde master é a janela principal.
+
+Inicialização
+python
+
+Copiar
+self.master.title("Keylogger")
+self.is_logging = False
+self.log_file = "key_log.txt"
+Define o título da janela.
+is_logging: Um indicador se o keylogger está ativo ou não.
+log_file: O nome do arquivo onde as teclas serão registradas.
+Botões
+python
+
+Copiar
+self.start_button = tk.Button(master, text="Iniciar Gravação", command=self.start_logging)
+self.start_button.pack(pady=20)
+
+self.stop_button = tk.Button(master, text="Parar Gravação", command=self.stop_logging, state=tk.DISABLED)
+self.stop_button.pack(pady=20)
+Cria dois botões: um para iniciar e outro para parar a gravação. O botão de parar começa desativado.
+Métodos da Classe
+log_start_time
+python
+
+Copiar
+def log_start_time(self):
+    ...
+Abre o arquivo de log em modo append e registra a data e hora em que a gravação começou.
+on_press
+python
+
+Copiar
+def on_press(self, key):
+    ...
+Captura a tecla pressionada. Se a tecla for um caractere, ele o registra diretamente; se for uma tecla especial (como Shift ou Ctrl), registra a tecla como um nome.
+on_release
+python
+
+Copiar
+def on_release(self, key):
+    ...
+Verifica se a tecla "Esc" foi pressionada para parar a gravação.
+start_logging
+python
+
+Copiar
+def start_logging(self):
+    ...
+Inicia a gravação de teclas. Se já estiver gravando, não faz nada. Habilita o listener do teclado e atualiza os estados dos botões.
+stop_logging
+python
+
+Copiar
+def stop_logging(self):
+    ...
+Para a gravação de teclas e atualiza os estados dos botões.
+Execução
+python
+
+Copiar
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = KeyloggerApp(root)
+    root.mainloop()
+Cria a janela principal e inicia o loop da interface gráfica.
+Considerações Finais
+Este código é um exemplo de como construir um keylogger simples, mas é importante lembrar que a captura de teclas sem o consentimento do usuário é ilegal e antiética. Use este tipo de software apenas para fins educacionais e éticos.
