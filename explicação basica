@@ -1,4 +1,9 @@
-sse código implementa um keylogger simples usando as bibliotecas tkinter para a interface gráfica e pynput para capturar entradas do teclado. Vamos analisar cada parte do código:
+
+FAÇA AS MODIFICAÇÕES COM CUIDADO
+PODE TIRAR O BOTÃO DE INICIO E PARAR BEM COMO A JANELA DOS MESMOS PARA COMEÇAR "AUTOMATICAMENTE"
+
+
+Esse código implementa um keylogger simples usando as bibliotecas tkinter para a interface gráfica e pynput para capturar entradas do teclado. Vamos analisar cada parte do código:
 
 Importações
 python
